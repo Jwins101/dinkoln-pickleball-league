@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Dinkoln Pickleball League</title>
+<meta name="description" content="Sign up for pickleball events, check the bracket, and track the league standings.">
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <a href="index.html" class="brand">
+      <img src="assets/logo.svg" alt="Dinkoln Pickleball League logo">
+      <span class="brand-name">The Dinkoln<br>Pickleball League<small>Lincoln Financial &middot; internal league</small></span>
+    </a>
+    <nav class="nav-links">
+      <a href="index.html" class="active"><span class="full">Home</span></a>
+      <a href="stats.html"><span class="full">Standings</span></a>
+      <a href="admin.html"><span class="full">Admin</span></a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container hero-grid">
+    <div>
+      <p class="eyebrow">Four score paddles ago&hellip;</p>
+      <h1>Dink happens. Sign up and get bracketed.</h1>
+      <p class="tagline">Pick an upcoming event, put your name down for singles or doubles, and show up ready. Brackets are drawn day-of, scores are logged live, and every match counts toward the league standings.</p>
+      <div class="hero-actions">
+        <a href="#events" class="btn btn-primary">See upcoming events</a>
+        <a href="stats.html" class="btn btn-ghost">View standings</a>
+      </div>
+    </div>
+    <div class="hero-emblem">
+      <img src="assets/logo.svg" alt="">
+    </div>
+  </div>
+</section>
+
+<div class="container">
+  <div class="bracket-rule"><span>How it works</span></div>
+  <div class="flow">
+    <div class="flow-step"><div class="flow-num">1</div><h4>Sign up</h4><p>Add your name to an open event.</p></div>
+    <div class="flow-step"><div class="flow-num">2</div><h4>Check in</h4><p>Admin confirms who's actually here.</p></div>
+    <div class="flow-step"><div class="flow-num">3</div><h4>Get bracketed</h4><p>Matchups are randomized on the spot.</p></div>
+    <div class="flow-step"><div class="flow-num">4</div><h4>Play &amp; report</h4><p>Scores get logged after each match.</p></div>
+    <div class="flow-step"><div class="flow-num">5</div><h4>Standings update</h4><p>Wins, points, and records roll in.</p></div>
+  </div>
+</div>
+
+<div class="container" id="events">
+  <div class="bracket-rule"><span>Upcoming &amp; recent events</span></div>
+  <div id="event-grid" class="event-grid">
+    <p class="eyebrow">Loading events&hellip;</p>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="bracket-rule"><span>&#127943;</span></div>
+    <p>The Dinkoln Pickleball League &middot; an unofficial, employee-run club for Lincoln Financial folks. Not affiliated with or endorsed by Lincoln National Corporation.</p>
+  </div>
+</footer>
+
+<!-- Sign-up modal -->
+<div id="signup-modal" class="modal-backdrop" style="display:none">
+  <div class="card modal">
+    <button class="modal-close" id="close-modal">&times;</button>
+    <h3 id="modal-event-name">Sign up</h3>
+    <p class="meta" id="modal-event-meta"></p>
+    <form id="signup-form">
+      <div class="field">
+        <label for="su-name">Your name</label>
+        <input type="text" id="su-name" required placeholder="Alex Rivera">
+      </div>
+      <div class="field" id="format-field" style="display:none">
+        <label>Format</label>
+        <div class="radio-group">
+          <label class="radio-chip"><input type="radio" name="su-format" value="singles" checked> Singles</label>
+          <label class="radio-chip"><input type="radio" name="su-format" value="doubles"> Doubles</label>
+        </div>
+      </div>
+      <div class="field" id="partner-field" style="display:none">
+        <label for="su-partner">Doubles partner (optional)</label>
+        <input type="text" id="su-partner" placeholder="Leave blank to be paired randomly">
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Confirm sign-up</button>
+    </form>
+  </div>
+</div>
+
+<script type="module" src="js/home.js"></script>
+</body>
+</html>

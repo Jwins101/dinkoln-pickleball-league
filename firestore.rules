@@ -1,0 +1,37 @@
+rules_version = '2';
+
+// Paste this into Firebase Console → Firestore Database → Rules.
+//
+// Model:
+//  - Anyone (no login) can view events/signups/bracket/standings, and can
+//    sign themselves up for an event.
+//  - Only a logged-in admin (you) can create/edit/delete events, remove
+//    signups, generate brackets, record scores, and snapshot stats.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /events/{eventId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+
+      match /signups/{signupId} {
+        allow read: if true;
+        allow create: if request.resource.data.name is string
+                      && request.resource.data.name.size() > 0
+                      && request.resource.data.name.size() < 80;
+        allow update, delete: if request.auth != null;
+      }
+
+      match /matches/{matchId} {
+        allow read: if true;
+        allow write: if request.auth != null;
+      }
+    }
+
+    match /players/{playerId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+  }
+}

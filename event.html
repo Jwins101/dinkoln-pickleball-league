@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Event &middot; The Dinkoln Pickleball League</title>
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <a href="index.html" class="brand">
+      <img src="assets/logo.svg" alt="Dinkoln Pickleball League logo">
+      <span class="brand-name">The Dinkoln<br>Pickleball League<small>Lincoln Financial &middot; internal league</small></span>
+    </a>
+    <nav class="nav-links">
+      <a href="index.html"><span class="full">Home</span></a>
+      <a href="stats.html"><span class="full">Standings</span></a>
+      <a href="admin.html"><span class="full">Admin</span></a>
+    </nav>
+  </div>
+</header>
+
+<div class="container" style="padding-top:36px;">
+  <a href="index.html" class="eyebrow">&larr; All events</a>
+  <div id="event-header" style="margin-top:14px;">
+    <p class="eyebrow">Loading&hellip;</p>
+  </div>
+
+  <div class="bracket-rule"><span>Who's in</span></div>
+  <div class="card" id="signup-card">
+    <table>
+      <thead><tr><th>Player</th><th>Format</th><th>Partner</th></tr></thead>
+      <tbody id="signup-rows"><tr><td colspan="3">Loading&hellip;</td></tr></tbody>
+    </table>
+  </div>
+
+  <div id="bracket-section" style="display:none">
+    <div class="bracket-rule"><span>Bracket</span></div>
+    <div class="bracket-scroll">
+      <div id="bracket-container"></div>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="bracket-rule"><span>&#127943;</span></div>
+    <p>The Dinkoln Pickleball League &middot; an unofficial, employee-run club for Lincoln Financial folks.</p>
+  </div>
+</footer>
+
+<script type="module" src="js/event.js"></script>
+</body>
+</html>

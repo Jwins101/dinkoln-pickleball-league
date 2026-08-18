@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin &middot; The Dinkoln Pickleball League</title>
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-shell" class="login-shell">
+  <div class="card login-card">
+    <div class="brand">
+      <img src="assets/logo.svg" alt="" style="width:40px;height:40px;">
+    </div>
+    <h2 style="text-align:center;">Commissioner login</h2>
+    <p class="meta" style="text-align:center; margin-bottom:20px;">Admin access only. Everyone else can browse and sign up without logging in.</p>
+    <form id="login-form">
+      <div class="field">
+        <label for="login-email">Email</label>
+        <input type="email" id="login-email" required>
+      </div>
+      <div class="field">
+        <label for="login-password">Password</label>
+        <input type="password" id="login-password" required>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Log in</button>
+    </form>
+    <p class="helper-text" style="text-align:center; margin-top:14px;"><a href="index.html">&larr; Back to the league site</a></p>
+  </div>
+</div>
+
+<!-- ADMIN APP -->
+<div id="admin-app" style="display:none">
+  <header class="site-header">
+    <div class="container">
+      <a href="index.html" class="brand">
+        <img src="assets/logo.svg" alt="Dinkoln Pickleball League logo">
+        <span class="brand-name">The Dinkoln<br>Pickleball League<small>Commissioner console</small></span>
+      </a>
+      <nav class="nav-links">
+        <a href="index.html"><span class="full">View site</span></a>
+        <button id="logout-btn" class="btn btn-ghost btn-sm">Log out</button>
+      </nav>
+    </div>
+  </header>
+
+  <div class="admin-shell">
+    <aside class="admin-sidebar">
+      <button id="new-event-btn" class="btn btn-primary btn-block" style="margin-bottom:16px;">+ New event</button>
+      <div id="event-nav"></div>
+    </aside>
+    <main class="admin-main" id="admin-main">
+      <div class="empty-state">
+        <p class="eyebrow">No event selected</p>
+        <p>Pick an event on the left, or create a new one to get started.</p>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- New / edit event modal -->
+<div id="event-modal" class="modal-backdrop" style="display:none">
+  <div class="card modal">
+    <button class="modal-close" data-close-modal="event-modal">&times;</button>
+    <h3 id="event-modal-title">New event</h3>
+    <form id="event-form">
+      <input type="hidden" id="ev-id">
+      <div class="field">
+        <label for="ev-name">Event name</label>
+        <input type="text" id="ev-name" required placeholder="Thursday Lunch Smash">
+      </div>
+      <div class="field field-row">
+        <div>
+          <label for="ev-date">Date</label>
+          <input type="date" id="ev-date" required>
+        </div>
+        <div>
+          <label for="ev-time">Time</label>
+          <input type="time" id="ev-time" required>
+        </div>
+      </div>
+      <div class="field">
+        <label for="ev-format">Format</label>
+        <select id="ev-format">
+          <option value="singles">Singles only</option>
+          <option value="doubles">Doubles only</option>
+          <option value="both">Both &mdash; players choose</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Save event</button>
+    </form>
+  </div>
+</div>
+
+<!-- Add attendee manually modal -->
+<div id="add-attendee-modal" class="modal-backdrop" style="display:none">
+  <div class="card modal">
+    <button class="modal-close" data-close-modal="add-attendee-modal">&times;</button>
+    <h3>Add attendee</h3>
+    <form id="add-attendee-form">
+      <div class="field">
+        <label for="aa-name">Name</label>
+        <input type="text" id="aa-name" required>
+      </div>
+      <div class="field" id="aa-format-field">
+        <label>Format</label>
+        <div class="radio-group">
+          <label class="radio-chip checked"><input type="radio" name="aa-format" value="singles" checked> Singles</label>
+          <label class="radio-chip"><input type="radio" name="aa-format" value="doubles"> Doubles</label>
+        </div>
+      </div>
+      <div class="field">
+        <label for="aa-partner">Partner (optional, doubles only)</label>
+        <input type="text" id="aa-partner">
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Add to event</button>
+    </form>
+  </div>
+</div>
+
+<!-- Score entry modal -->
+<div id="score-modal" class="modal-backdrop" style="display:none">
+  <div class="card modal">
+    <button class="modal-close" data-close-modal="score-modal">&times;</button>
+    <h3>Enter score</h3>
+    <form id="score-form">
+      <div class="field">
+        <label id="score-p1-label">Player 1</label>
+        <input type="number" id="score-p1" min="0" required>
+      </div>
+      <div class="field">
+        <label id="score-p2-label">Player 2</label>
+        <input type="number" id="score-p2" min="0" required>
+      </div>
+      <p class="helper-text" id="score-tie-note" style="display:none;">Scores are tied &mdash; pick the winner below to force the result.</p>
+      <div class="field" id="force-winner-field" style="display:none;">
+        <label>Winner</label>
+        <div class="radio-group" id="force-winner-group"></div>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Save score</button>
+    </form>
+  </div>
+</div>
+
+<script type="module" src="js/admin.js"></script>
+</body>
+</html>
