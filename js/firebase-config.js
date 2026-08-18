@@ -14,7 +14,7 @@ import {
 
 // ---- PASTE YOUR FIREBASE CONFIG HERE ----
 const firebaseConfig = {
-  apiKey: ${{ secrets.GOOGLEAPI }},
+  apiKey:"GOOGLEAPI",
   authDomain: "dinkoln-pickleball.firebaseapp.com",
   projectId: "dinkoln-pickleball",
   storageBucket: "dinkoln-pickleball.firebasestorage.app",
