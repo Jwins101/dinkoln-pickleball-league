@@ -95,6 +95,31 @@ export function advanceWinner(matches, finishedMatch) {
   return nextMatch;
 }
 
+/**
+ * Swap out the competitor in slot 1 or 2 of a match (e.g. someone had to
+ * leave and a substitute is stepping in). Only meant for matches that
+ * haven't been played yet — for a bye "match," the sole competitor is also
+ * the recorded winner, so this updates the winner and cascades the change
+ * into whichever next-round slot that bye already advanced into.
+ * Mutates `matches` in place and returns { updatedMatch, nextMatch }, where
+ * nextMatch is the downstream match that also needed updating, or null.
+ */
+export function swapPlayer(matches, matchId, slotNum, newCompetitor) {
+  const match = matches.find(m => m.id === matchId);
+  if (!match) return { updatedMatch: null, nextMatch: null };
+
+  const field = `p${slotNum}`;
+  match[field] = newCompetitor;
+
+  let nextMatch = null;
+  if (match.bye) {
+    match.winner = newCompetitor;
+    nextMatch = advanceWinner(matches, match);
+  }
+
+  return { updatedMatch: match, nextMatch };
+}
+
 export function groupByRound(matches) {
   const rounds = {};
   matches.forEach(m => {
@@ -114,7 +139,7 @@ export function roundLabel(roundIndex, totalRounds) {
 }
 
 /** Renders the full bracket as HTML into a container element. */
-export function renderBracket(container, matches, { onScore } = {}) {
+export function renderBracket(container, matches, { onScore, onSwap } = {}) {
   const rounds = groupByRound(matches.sort((a, b) => a.round - b.round));
   const totalRounds = rounds.length;
 
@@ -132,7 +157,7 @@ export function renderBracket(container, matches, { onScore } = {}) {
     col.appendChild(title);
 
     roundMatches.forEach(m => {
-      col.appendChild(renderMatchCard(m, onScore));
+      col.appendChild(renderMatchCard(m, { onScore, onSwap }));
     });
 
     wrap.appendChild(col);
@@ -146,7 +171,7 @@ function slotLabel(competitor) {
   return competitor.name;
 }
 
-function renderMatchCard(match, onScore) {
+function renderMatchCard(match, { onScore, onSwap } = {}) {
   const card = document.createElement("div");
   card.className = "match";
 
@@ -154,6 +179,9 @@ function renderMatchCard(match, onScore) {
   badge.className = "match-format";
   badge.textContent = match.format;
   card.appendChild(badge);
+
+  // Locked once a real (non-bye) result has been recorded — swap before that.
+  const locked = match.completed && !match.bye;
 
   [1, 2].forEach(n => {
     const competitor = match[`p${n}`];
@@ -164,12 +192,28 @@ function renderMatchCard(match, onScore) {
     if (match.winner && competitor && match.winner.name === competitor.name) cls += " winner";
     row.className = cls;
     const nameSpan = document.createElement("span");
+    nameSpan.className = "name";
     nameSpan.textContent = slotLabel(competitor);
+    const rightSide = document.createElement("span");
+    rightSide.style.display = "inline-flex";
+    rightSide.style.alignItems = "center";
+    rightSide.style.gap = "6px";
+    if (onSwap && competitor && !locked) {
+      const swapBtn = document.createElement("button");
+      swapBtn.type = "button";
+      swapBtn.className = "swap-btn";
+      swapBtn.title = "Swap player";
+      swapBtn.setAttribute("aria-label", "Swap player");
+      swapBtn.textContent = "\u270E";
+      swapBtn.onclick = (e) => { e.stopPropagation(); onSwap(match, n); };
+      rightSide.appendChild(swapBtn);
+    }
     const scoreSpan = document.createElement("span");
     scoreSpan.className = "score";
     scoreSpan.textContent = match.bye ? (competitor ? "" : "BYE") : (score === null || score === undefined ? "\u2013" : score);
+    rightSide.appendChild(scoreSpan);
     row.appendChild(nameSpan);
-    row.appendChild(scoreSpan);
+    row.appendChild(rightSide);
     card.appendChild(row);
     if (n === 1) {
       const div = document.createElement("div");

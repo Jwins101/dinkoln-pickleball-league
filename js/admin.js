@@ -4,7 +4,7 @@ import {
   signInWithEmailAndPassword, onAuthStateChanged, signOut
 } from "./firebase-config.js";
 import { qs, qsa, escapeHtml, formatDateLabel, toast, slugify, statusLabel } from "./util.js";
-import { generateBracket, advanceWinner, renderBracket } from "./bracket.js";
+import { generateBracket, advanceWinner, swapPlayer, renderBracket } from "./bracket.js";
 
 // ---------------------------------------------------------
 // AUTH
@@ -311,7 +311,10 @@ function renderBracketCard(ev) {
 
   const target = qs("#bracket-render-target");
   if (matchesCache.length) {
-    renderBracket(target, matchesCache, { onScore: (m) => openScoreModal(ev, m) });
+    renderBracket(target, matchesCache, {
+      onScore: (m) => openScoreModal(ev, m),
+      onSwap: (m, slotNum) => openSwapModal(ev, m, slotNum),
+    });
   } else {
     target.innerHTML = `<p class="helper-text">No bracket yet.</p>`;
   }
@@ -434,6 +437,73 @@ qs("#score-form").addEventListener("submit", async (e) => {
 
     hideModal("score-modal");
     toast("Score saved.", "success");
+  } catch (err) {
+    toast(err.message, "error");
+  }
+});
+
+// ---------------------------------------------------------
+// SWAP PLAYER — substitute someone in before a match is played
+// ---------------------------------------------------------
+let activeSwap = null;
+
+function openSwapModal(ev, match, slotNum) {
+  const competitor = match[`p${slotNum}`];
+  if (!competitor) return;
+  activeSwap = { ev, match, slotNum };
+
+  const opponent = match[`p${slotNum === 1 ? 2 : 1}`];
+  qs("#swap-context").textContent = opponent
+    ? `Round ${match.round} \u00B7 vs ${opponent.name}`
+    : `Round ${match.round}`;
+
+  const isDoubles = match.format === "doubles";
+  qs("#swap-name-2-field").style.display = isDoubles ? "block" : "none";
+  qs("#swap-name-1-label").textContent = isDoubles ? "Player 1" : "Name";
+  qs("#swap-name-1").value = competitor.players?.[0] || "";
+  qs("#swap-name-2").value = isDoubles ? (competitor.players?.[1] || "") : "";
+  qs("#swap-name-2").required = isDoubles;
+
+  const suggestions = signupsCache
+    .filter(su => su.format === match.format)
+    .map(su => su.name);
+  qs("#swap-suggestions-1").innerHTML = suggestions.map(n => `<option value="${escapeHtml(n)}">`).join("");
+  qs("#swap-suggestions-2").innerHTML = suggestions.map(n => `<option value="${escapeHtml(n)}">`).join("");
+
+  showModal("swap-modal");
+}
+
+qs("#swap-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  if (!activeSwap) return;
+  const { ev, match, slotNum } = activeSwap;
+  const isDoubles = match.format === "doubles";
+  const name1 = qs("#swap-name-1").value.trim();
+  const name2 = isDoubles ? qs("#swap-name-2").value.trim() : "";
+
+  if (!name1 || (isDoubles && !name2)) {
+    toast("Enter a name for every slot.", "error");
+    return;
+  }
+
+  const newCompetitor = isDoubles
+    ? { name: `${name1} & ${name2}`, players: [name1, name2] }
+    : { name: name1, players: [name1] };
+
+  try {
+    const { updatedMatch, nextMatch } = swapPlayer(matchesCache, match.id, slotNum, newCompetitor);
+    if (!updatedMatch) throw new Error("Couldn't find that match anymore \u2014 try refreshing.");
+
+    const payload = { [`p${slotNum}`]: newCompetitor };
+    if (updatedMatch.bye) payload.winner = newCompetitor;
+    await updateDoc(doc(db, "events", ev.id, "matches", updatedMatch.id), payload);
+
+    if (nextMatch) {
+      await updateDoc(doc(db, "events", ev.id, "matches", nextMatch.id), { p1: nextMatch.p1, p2: nextMatch.p2 });
+    }
+
+    hideModal("swap-modal");
+    toast("Player swapped.", "success");
   } catch (err) {
     toast(err.message, "error");
   }
