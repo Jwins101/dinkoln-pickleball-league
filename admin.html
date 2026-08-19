@@ -147,6 +147,29 @@
   </div>
 </div>
 
+<!-- Swap player modal -->
+<div id="swap-modal" class="modal-backdrop" style="display:none">
+  <div class="card modal">
+    <button class="modal-close" data-close-modal="swap-modal">&times;</button>
+    <h3>Swap player</h3>
+    <p class="meta" id="swap-context"></p>
+    <form id="swap-form">
+      <div class="field">
+        <label for="swap-name-1" id="swap-name-1-label">Name</label>
+        <input type="text" id="swap-name-1" required list="swap-suggestions-1">
+        <datalist id="swap-suggestions-1"></datalist>
+      </div>
+      <div class="field" id="swap-name-2-field" style="display:none">
+        <label for="swap-name-2" id="swap-name-2-label">Partner</label>
+        <input type="text" id="swap-name-2" list="swap-suggestions-2">
+        <datalist id="swap-suggestions-2"></datalist>
+      </div>
+      <p class="helper-text">Suggestions are drawn from this event's attendee list, but you can type any name — handy for a last-minute walk-on. If they're going to keep playing, add them as an attendee too so their stats get tracked.</p>
+      <button type="submit" class="btn btn-primary btn-block">Save swap</button>
+    </form>
+  </div>
+</div>
+
 <script type="module" src="js/admin.js"></script>
 </body>
 </html>
